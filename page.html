@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chaos Page</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    background: radial-gradient(circle at top left, #f9d6f9, #e6c7f7);
+    font-family: 'Poppins', 'Quicksand', sans-serif;
+  }
+  body::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(#fff 10%, transparent 11%);
+    background-size: 40px 40px;
+    opacity: 0.3;
+    z-index: -1;
+  }
+  .container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-around;
+    align-items: center;
+  }
+  button {
+    background: #f7b6f7;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  #chatbox {
+    width: 60%;
+    height: 40%;
+    background: #fff;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  }
+  #chatheader {
+    background: #f7b6f7;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+  }
+  #messages {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    font-size: 14px;
+  }
+  #inputarea {
+    display: flex;
+    border-top: 1px solid #eee;
+  }
+  #inputarea input {
+    flex: 1;
+    border: none;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 0 0 0 20px;
+  }
+  #inputarea button {
+    border-radius: 0 0 20px 0;
+  }
+  .flourish {
+    position: absolute;
+    pointer-events: none;
+    font-size: 20px;
+    animation: burst 1s ease forwards;
+  }
+  @keyframes burst {
+    from {opacity:1; transform: scale(1);}
+    to {opacity:0; transform: scale(3);}
+  }
+  .heart {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    font-size: 100px;
+    color: red;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0% {transform: translate(-50%,-50%) scale(1);}
+    50% {transform: translate(-50%,-50%) scale(1.3);}
+    100% {transform: translate(-50%,-50%) scale(1);}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="chatbox">
+    <div id="chatheader">Ask me anything</div>
+    <div id="messages"></div>
+    <div id="inputarea">
+      <input id="chatinput" placeholder="Type here...">
+      <button id="sendbtn">Send</button>
+    </div>
+  </div>
+  <button id="complimentBtn">Click for a compliment</button>
+  <div>
+    <button id="closeBtn">Close</button>
+    <button id="skipBtn">Skip</button>
+  </div>
+</div>
+<script>
+  const runawayBtns = [document.getElementById('closeBtn'), document.getElementById('skipBtn')];
+  let runawayActive = true;
+  runawayBtns.forEach(btn=>{
+    btn.addEventListener('mouseover', ()=>{
+      if(!runawayActive) return;
+      const x = (Math.random()*80)+"%";
+      const y = (Math.random()*80)+"%";
+      btn.style.position="absolute";
+      btn.style.left=x;
+      btn.style.top=y;
+    });
+  });
+
+  const compliments = [
+    "You light up the room!",
+    "Your smile could power a city!",
+    "You're the secret ingredient in life's recipe!",
+    "If charm were currency, you'd own the world!",
+    "You're hotter than a jalapeño in July!",
+    "You're the glitter explosion at a unicorn disco!",
+    "You're the cosmic queen of absurd magnificence!"
+  ];
+  let complimentIndex=0;
+  let dodgeCount=0;
+  const complimentBtn=document.getElementById('complimentBtn');
+  complimentBtn.addEventListener('mouseover', ()=>{
+    if(dodgeCount<Math.floor(Math.random()*3)+3){
+      complimentBtn.style.position="absolute";
+      complimentBtn.style.left=(Math.random()*80)+"%";
+      complimentBtn.style.top=(Math.random()*80)+"%";
+      dodgeCount++;
+    }
+  });
+  complimentBtn.addEventListener('click', ()=>{
+    const msg=compliments[complimentIndex%compliments.length];
+    complimentIndex++;
+    const flourish=document.createElement('div');
+    flourish.className="flourish";
+    flourish.textContent="✨";
+    flourish.style.left=(Math.random()*100)+"%";
+    flourish.style.top=(Math.random()*100)+"%";
+    flourish.style.fontSize=(20+complimentIndex*5)+"px";
+    document.body.appendChild(flourish);
+    setTimeout(()=>flourish.remove(),1000);
+    alert(msg);
+  });
+
+  const punPool=[
+    "I used to be a banker, but I lost interest.",
+    "I’m reading a book on anti-gravity. It’s impossible to put down!",
+    "Nice try, but you can’t stop me with that!",
+    "I wondered why the baseball was getting bigger. Then it hit me.",
+    "I’m on a seafood diet. I see food and I eat it.",
+    "Nice pun attempt, but woof woof is the key!"
+  ];
+  const messages=document.getElementById('messages');
+  const input=document.getElementById('chatinput');
+  const sendbtn=document.getElementById('sendbtn');
+  sendbtn.addEventListener('click', sendMessage);
+  input.addEventListener('keypress', e=>{if(e.key==="Enter") sendMessage();});
+  function sendMessage(){
+    const text=input.value.trim();
+    if(!text) return;
+    const userMsg=document.createElement('div');
+    userMsg.textContent="You: "+text;
+    messages.appendChild(userMsg);
+    input.value="";
+    if(text.toLowerCase()==="woof woof"){
+      runawayActive=false;
+      const heart=document.createElement('div');
+      heart.className="heart";
+      heart.textContent="❤";
+      document.body.appendChild(heart);
+      const botMsg=document.createElement('div');
+      botMsg.textContent="Bot: Finally, calm and sincere. You’re amazing.";
+      messages.appendChild(botMsg);
+      return;
+    }
+    let pun=punPool[Math.floor(Math.random()*punPool.length)];
+    const botMsg=document.createElement('div');
+    botMsg.textContent="Bot: "+pun;
+    messages.appendChild(botMsg);
+    if(Math.random()<0.3){
+      let pun2=punPool[Math.floor(Math.random()*punPool.length)];
+      const botMsg2=document.createElement('div');
+      botMsg2.textContent="Bot: "+pun2;
+      messages.appendChild(botMsg2);
+    }
+  }
+</script>
+</body>
+</html>
